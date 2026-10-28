@@ -67,25 +67,51 @@ Storage Boxes are also available on the root client as `hetzner.storageBoxes`.
 
 ## Errors
 
-Failed API responses throw `Error` instances with messages shaped like:
+Every failed API response throws a `HetznerApiError`, exported from the root and from `/storage-boxes`:
+
+| Property | Meaning |
+| --- | --- |
+| `code` | Hetzner's error code, such as `resource_unavailable` or `not_found`. `unknown_error` when the body was not a Hetzner error. |
+| `status` | HTTP status of the response. |
+| `apiMessage` | Hetzner's message, without the prefix. |
+| `details` | Extra error data Hetzner sent, if any. |
+
+```ts
+import { createHetznerClient, isHetznerApiError } from "@neonjelly/hetzner-api";
+
+try {
+  await hetzner.servers.createServer({ name: "web", server_type: "cx33", image: "ubuntu-24.04", location: "fsn1" });
+} catch (error) {
+  if (isHetznerApiError(error, "resource_unavailable")) {
+    // Hetzner has no capacity for this server type in this location right now.
+  }
+  throw error;
+}
+```
+
+`message` keeps the shape earlier versions threw, so code that matched on it keeps working:
 
 ```text
 Hetzner API Error [<code>]: <message>
-```
-
-Storage Box failures use:
-
-```text
 Hetzner Storage API Error [<code>]: <message>
 ```
 
-DNS zone import/export use the same Cloud error shape when the HTTP status is not OK.
+## Server type availability
+
+`listServerTypes` returns, for every location that supports a server type, whether Hetzner currently has capacity
+(`available`) and whether it recommends that location (`recommended`). Hetzner calls `available` an indicator, not a
+guarantee: a `createServer` call can still fail with `resource_unavailable`.
+
+```ts
+const { server_types } = await hetzner.locations.listServerTypes({ name: "cx33" });
+const inStock = server_types[0]?.locations.filter((location) => location.available).map((location) => location.name);
+```
 
 ## Implemented coverage
 
 | Area | Highlights |
 | --- | --- |
-| Locations | locations, datacenters, server types |
+| Locations | locations, server types with per-location availability |
 | Servers | create, delete, reboot, actions, metrics |
 | Volumes | CRUD, attach/detach, resize, protection, actions |
 | DNS | zones, RRSets, import/export zone files, zone/RRSet actions |

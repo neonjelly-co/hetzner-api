@@ -1,11 +1,15 @@
+import { type HetznerErrorBody, parseJsonBody, toHetznerApiError } from "./errors";
+
+export { HetznerApiError, isHetznerApiError } from "./errors";
+export type { HetznerErrorBody, HetznerErrorCode } from "./errors";
+
 const HETZNER_STORAGE_API_BASE = "https://api.hetzner.com/v1";
 
-export interface StorageBoxError {
-  error: {
-    code: string;
-    message: string;
-  };
-}
+/** Prefix of every Storage API error message: `Hetzner Storage API Error [<code>]: <message>`. */
+const STORAGE_ERROR_PREFIX = "Hetzner Storage API Error";
+
+/** The body of a failed Storage API response. Kept as an alias of {@link HetznerErrorBody} for compatibility. */
+export type StorageBoxError = HetznerErrorBody;
 
 export interface StorageBoxAction {
   id: number;
@@ -204,14 +208,12 @@ export class StorageBoxesClient {
     }
 
     const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
 
     if (!response.ok) {
-      const error = data as StorageBoxError;
-      throw new Error(`Hetzner Storage API Error [${error.error?.code}]: ${error.error?.message}`);
+      throw toHetznerApiError(response, text, STORAGE_ERROR_PREFIX);
     }
 
-    return data as T;
+    return (parseJsonBody(text) ?? {}) as T;
   }
 
   /**

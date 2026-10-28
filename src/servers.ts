@@ -1,12 +1,11 @@
 import { HetznerCloudBase } from "./base";
-import type { ServerAction } from "./common";
+import type { Location, ServerAction } from "./common";
 
 export interface CreateServerRequest {
   name: string;
   server_type: string;
   image: string;
   location?: string;
-  datacenter?: string;
   start_after_create?: boolean;
   labels?: Record<string, string>;
   automount?: boolean;
@@ -61,20 +60,8 @@ export interface Server {
     memory: number;
     disk: number;
   };
-  datacenter: {
-    id: number;
-    name: string;
-    description: string;
-    location: {
-      id: number;
-      name: string;
-      description: string;
-      country: string;
-      city: string;
-      latitude: number;
-      longitude: number;
-    };
-  };
+  /** Where the server runs. Replaces the `datacenter` property Hetzner removed on 1 July 2026. */
+  location: Location;
   image: {
     id: number;
     name: string;
