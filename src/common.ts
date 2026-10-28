@@ -1,11 +1,9 @@
+import type { HetznerErrorBody } from "./errors";
+
 export const HETZNER_API_BASE = "https://api.hetzner.cloud/v1";
 
-export interface HetznerError {
-  error: {
-    code: string;
-    message: string;
-  };
-}
+/** The body of a failed Cloud API response. Kept as an alias of {@link HetznerErrorBody} for compatibility. */
+export type HetznerError = HetznerErrorBody;
 
 export interface ServerAction {
   id: number;

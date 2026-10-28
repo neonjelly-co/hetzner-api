@@ -26,15 +26,24 @@ try {
   );
   await writeFile(
     join(fixture, "smoke.mjs"),
-    `import { createHetznerClient, StorageBoxesClient } from "@neonjelly/hetzner-api";
+    `import { createHetznerClient, HetznerApiError, isHetznerApiError, StorageBoxesClient } from "@neonjelly/hetzner-api";
 import { createHetznerClient as createFromAlias } from "@neonjelly/hetzner-api/api";
-import { StorageBoxesClient as StorageBoxesFromSubpath } from "@neonjelly/hetzner-api/storage-boxes";
+import {
+  HetznerApiError as HetznerApiErrorFromSubpath,
+  StorageBoxesClient as StorageBoxesFromSubpath,
+} from "@neonjelly/hetzner-api/storage-boxes";
 
 if (typeof createHetznerClient !== "function" || typeof createFromAlias !== "function") {
   throw new Error("Client factory export is missing");
 }
 if (typeof StorageBoxesClient !== "function" || typeof StorageBoxesFromSubpath !== "function") {
   throw new Error("Storage Boxes client export is missing");
+}
+if (typeof HetznerApiError !== "function" || typeof isHetznerApiError !== "function") {
+  throw new Error("Error exports are missing");
+}
+if (HetznerApiErrorFromSubpath !== HetznerApiError) {
+  throw new Error("The root and storage-boxes entries must share one HetznerApiError class");
 }
 `,
   );

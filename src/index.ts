@@ -1,4 +1,6 @@
 export { createHetznerClient, type HetznerCloudClient } from "./client";
+export { HetznerApiError, isHetznerApiError, UNKNOWN_ERROR_CODE } from "./errors";
+export type { HetznerErrorBody, HetznerErrorCode } from "./errors";
 
 export type { HetznerError, ListLocationsResponse, Location, ServerAction } from "./common";
 export type {
@@ -28,10 +30,6 @@ export type {
 } from "./dns";
 
 export type {
-  Datacenter,
-  DatacenterServerTypes,
-  ListDatacentersRequest,
-  ListDatacentersResponse,
   ListServerTypesRequest,
   ListServerTypesResponse,
   ServerType,

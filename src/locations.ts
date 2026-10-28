@@ -14,10 +14,20 @@ export interface ServerTypeDeprecation {
   unavailable_after: string; // ISO 8601 timestamp
 }
 
+/** A location that supports the server type. A location missing from `locations` does not support it. */
 export interface ServerTypeLocation {
   id: number;
   name: string;
+  /** Deprecation of the server type in this location. Replaces the top-level `ServerType.deprecated` flag. */
   deprecation: ServerTypeDeprecation | null;
+  /**
+   * Whether Hetzner currently has capacity for this server type in this location. Hetzner documents it as
+   * "only an indicator whether resources are currently available and is no guarantee": a create call can still
+   * fail with `resource_unavailable`. Replaces the removed `datacenter.server_types.available` lists.
+   */
+  available: boolean;
+  /** Whether Hetzner recommends this location for this server type. Several locations can be recommended. */
+  recommended: boolean;
 }
 
 export interface ServerType {
@@ -27,7 +37,11 @@ export interface ServerType {
   cores: number;
   memory: number;
   disk: number;
-  deprecated: boolean;
+  /**
+   * @deprecated Hetzner removes this field on 2 November 2026. Read `deprecation` on the matching entry of
+   * `locations` instead.
+   */
+  deprecated?: boolean;
   deprecation: ServerTypeDeprecation | null;
   prices: ServerTypePrice[];
   storage_type: "local" | "network";
@@ -46,42 +60,6 @@ export interface ListServerTypesRequest {
 
 export interface ListServerTypesResponse {
   server_types: ServerType[];
-  meta?: {
-    pagination: {
-      page: number;
-      per_page: number;
-      previous_page: number | null;
-      next_page: number | null;
-      last_page: number;
-      total_entries: number;
-    };
-  };
-}
-
-export interface DatacenterServerTypes {
-  available: number[];
-  available_for_migration: number[];
-  supported: number[];
-}
-
-export interface Datacenter {
-  id: number;
-  name: string;
-  description: string;
-  location: Location;
-  server_types: DatacenterServerTypes;
-}
-
-export interface ListDatacentersRequest {
-  name?: string;
-  page?: number;
-  per_page?: number;
-  sort?: "id" | "id:asc" | "id:desc" | "name" | "name:asc" | "name:desc";
-}
-
-export interface ListDatacentersResponse {
-  datacenters: Datacenter[];
-  recommendation: number;
   meta?: {
     pagination: {
       page: number;
@@ -142,33 +120,5 @@ export class LocationsClient extends HetznerCloudBase {
      */
     async getLocation(idOrName: number | string): Promise<{ location: Location }> {
       return this.request<{ location: Location }>("GET", `/locations/${idOrName}`);
-    }
-
-    /**
-     * Lists all available data centers.
-     * @see https://docs.hetzner.cloud/reference/cloud#tag/data-centers/list_datacenters
-     */
-    async listDatacenters(request?: ListDatacentersRequest): Promise<ListDatacentersResponse> {
-      const params: Record<string, string> = {};
-
-      if (request?.name) params.name = request.name;
-      if (request?.page !== undefined) params.page = request.page.toString();
-      if (request?.per_page !== undefined) params.per_page = request.per_page.toString();
-      if (request?.sort) params.sort = request.sort;
-
-      return this.request<ListDatacentersResponse>(
-        "GET",
-        "/datacenters",
-        undefined,
-        Object.keys(params).length > 0 ? params : undefined,
-      );
-    }
-
-    /**
-     * Gets a specific data center by ID.
-     * @see https://docs.hetzner.cloud/reference/cloud#tag/data-centers/get_datacenter
-     */
-    async getDatacenter(id: number): Promise<{ datacenter: Datacenter }> {
-      return this.request<{ datacenter: Datacenter }>("GET", `/datacenters/${id}`);
     }
 }

@@ -1,5 +1,6 @@
-import { HetznerCloudBase } from "./base";
-import { HETZNER_API_BASE, type HetznerError } from "./common";
+import { CLOUD_ERROR_PREFIX, HetznerCloudBase } from "./base";
+import { HETZNER_API_BASE } from "./common";
+import { parseJsonBody, toHetznerApiError } from "./errors";
 
 export interface ZoneDeprecation {
   announced: string;
@@ -243,12 +244,13 @@ export class DnsClient extends HetznerCloudBase {
         },
       });
 
+      const text = await response.text();
+
       if (!response.ok) {
-        const data = (await response.json()) as HetznerError;
-        throw new Error(`Hetzner API Error [${data.error.code}]: ${data.error.message}`);
+        throw toHetznerApiError(response, text, CLOUD_ERROR_PREFIX);
       }
 
-      return response.text();
+      return text;
     }
 
     /**
@@ -266,14 +268,13 @@ export class DnsClient extends HetznerCloudBase {
         body: zoneFile,
       });
 
-      const data = await response.json();
+      const text = await response.text();
 
       if (!response.ok) {
-        const error = data as HetznerError;
-        throw new Error(`Hetzner API Error [${error.error.code}]: ${error.error.message}`);
+        throw toHetznerApiError(response, text, CLOUD_ERROR_PREFIX);
       }
 
-      return data as { action: ZoneAction };
+      return parseJsonBody(text) as { action: ZoneAction };
     }
 
     /**

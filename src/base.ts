@@ -1,7 +1,11 @@
-import { HETZNER_API_BASE, type HetznerError } from "./common";
+import { HETZNER_API_BASE } from "./common";
+import { type HetznerApiError, parseJsonBody, toHetznerApiError } from "./errors";
+
+/** Prefix of every Cloud API error message: `Hetzner API Error [<code>]: <message>`. */
+export const CLOUD_ERROR_PREFIX = "Hetzner API Error";
 
 /**
- * Shared Hetzner Cloud API client base (`api.hetzner.cloud`).
+ * Shared Hetzner Cloud API client base (`api.hetzner.cloud`). Failed responses throw {@link HetznerApiError}.
  */
 export class HetznerCloudBase {
   protected apiToken: string;
@@ -37,13 +41,11 @@ export class HetznerCloudBase {
     }
 
     const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
 
     if (!response.ok) {
-      const error = data as HetznerError;
-      throw new Error(`Hetzner API Error [${error.error?.code}]: ${error.error?.message}`);
+      throw toHetznerApiError(response, text, CLOUD_ERROR_PREFIX);
     }
 
-    return data as T;
+    return (parseJsonBody(text) ?? {}) as T;
   }
 }
