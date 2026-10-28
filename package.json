@@ -1,6 +1,6 @@
 {
   "name": "@neonjelly/hetzner-api",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Unofficial TypeScript client for the Hetzner Cloud, DNS, and Storage Box APIs",
   "type": "module",
   "license": "MIT",
