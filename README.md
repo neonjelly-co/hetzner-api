@@ -6,6 +6,8 @@ This package is **not** affiliated with, endorsed by, or supported by Hetzner On
 
 Official API documentation: [Hetzner Cloud API docs](https://docs.hetzner.cloud/)
 
+Developed by [Neonjelly.Studio](https://neonjelly.studio)
+
 ## Requirements
 
 - **Bun** 1.2+ for development
