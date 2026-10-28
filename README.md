@@ -1,4 +1,4 @@
-# @neonjelly/hetzner
+# Hetzner API
 
 Unofficial TypeScript client for the Hetzner Cloud, DNS, and Storage Box APIs.
 
