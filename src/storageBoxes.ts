@@ -1,6 +1,6 @@
 const HETZNER_STORAGE_API_BASE = "https://api.hetzner.com/v1";
 
-export interface HetznerError {
+export interface StorageBoxError {
   error: {
     code: string;
     message: string;
@@ -207,7 +207,7 @@ export class StorageBoxesClient {
     const data = text ? JSON.parse(text) : {};
 
     if (!response.ok) {
-      const error = data as HetznerError;
+      const error = data as StorageBoxError;
       throw new Error(`Hetzner Storage API Error [${error.error?.code}]: ${error.error?.message}`);
     }
 

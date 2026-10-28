@@ -49,7 +49,25 @@ export type {
   MetricsTimeSeries,
   Server,
 } from "./servers";
-export type { CreateStorageBoxRequest, StorageBox, StorageBoxType } from "./storageBoxes";
+export { StorageBoxesClient } from "./storageBoxes";
+export type {
+  CreateStorageBoxRequest,
+  CreateStorageBoxResponse,
+  CreateStorageBoxSubaccountRequest,
+  ListStorageBoxesResponse,
+  ListStorageBoxTypesResponse,
+  StorageBox,
+  StorageBoxAccessSettings,
+  StorageBoxAccessSettingsInput,
+  StorageBoxAction,
+  StorageBoxError,
+  StorageBoxLocation,
+  StorageBoxStats,
+  StorageBoxSubaccount,
+  StorageBoxSubaccountAccessSettings,
+  StorageBoxType,
+  StorageBoxTypePrice,
+} from "./storageBoxes";
 export type {
   AttachVolumeRequest,
   ChangeVolumeProtectionRequest,

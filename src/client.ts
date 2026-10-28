@@ -25,7 +25,7 @@ class HetznerCloudClient {
  *
  * @example
  * ```ts
- * import { createHetznerClient } from "@repo/hetzner/api";
+ * import { createHetznerClient } from "@neonjelly/hetzner-api";
  *
  * const hetzner = createHetznerClient("your-api-token");
  *

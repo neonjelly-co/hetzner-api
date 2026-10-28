@@ -33,7 +33,7 @@ export class HetznerCloudBase {
     });
 
     if (response.status === 204) {
-      return {} as T;
+      return void 0 as T;
     }
 
     const text = await response.text();

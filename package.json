@@ -1,0 +1,74 @@
+{
+  "name": "@neonjelly/hetzner-api",
+  "version": "0.1.0",
+  "description": "Unofficial TypeScript client for the Hetzner Cloud, DNS, and Storage Box APIs",
+  "type": "module",
+  "license": "MIT",
+  "author": "neonjelly-co",
+  "keywords": [
+    "hetzner",
+    "hetzner-cloud",
+    "dns",
+    "storage-box",
+    "api-client",
+    "typescript",
+    "bun"
+  ],
+  "homepage": "https://github.com/neonjelly-co/hetzner-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neonjelly-co/hetzner-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neonjelly-co/hetzner-api/issues"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22",
+    "bun": ">=1.2.0"
+  },
+  "packageManager": "bun@1.3.14",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./api": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./storage-boxes": {
+      "types": "./dist/storage-boxes.d.ts",
+      "import": "./dist/storage-boxes.js",
+      "default": "./dist/storage-boxes.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "bun --bun tsdown",
+    "dev": "bun --bun tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "check": "bun run typecheck && bun run test && bun run build && bun run smoke:pack",
+    "smoke:pack": "bun scripts/package-smoke.ts",
+    "pack:dry": "bun pm pack --dry-run --ignore-scripts"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "^0.18.2",
+    "@types/bun": "^1.2.21",
+    "publint": "^0.3.12",
+    "tsdown": "^0.22.14",
+    "typescript": "^5.9.2"
+  }
+}
